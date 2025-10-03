@@ -44,7 +44,7 @@ module.exports = {
     })();
     console.log(`Logged In As ${client.user.tag}`)
     console.log('ready')
-    
+    processCancelled(client); // Initial call when the bot is ready
     setInterval(() => {
       processCancelled(client);
     }, 10 * 60 * 1000); // 10 minutes interval
