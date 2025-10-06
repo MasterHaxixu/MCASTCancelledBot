@@ -1,5 +1,5 @@
 
-# MCAST Cancelled Lectures Bot
+# MCAST Cancelled Lectures Discord Bot
 
 ### How It Works:
 - Utilises an API endpoint which scrapes the cancelled page and returns the data in JSON format. 
