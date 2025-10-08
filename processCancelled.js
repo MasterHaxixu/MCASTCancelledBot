@@ -77,8 +77,8 @@ const embedDefault = (data) => {
             embed.addFields({
                 name: "🔴 Daily Cancellations",
                 value: data.dailyCancellations.map((lecture, index) => {
-                    return `**${index + 1}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
-                }).join('\n\n'),
+                    return `**${index + 1}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
+                }).join('\n'),
                 inline: false
             });
         }
@@ -88,8 +88,8 @@ const embedDefault = (data) => {
             embed.addFields({
                 name: "⛔ Permanent Cancellations",
                 value: data.permanentCancellations.map((lecture, index) => {
-                    return `**${index + 1}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
-                }).join('\n\n'),
+                    return `**${index + 1}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
+                }).join('\n'),
                 inline: false
             });
         }
