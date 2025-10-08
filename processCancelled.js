@@ -74,35 +74,23 @@ const embedDefault = (data) => {
 
         // Add daily cancellations
         if (hasDailyCancellations) {
-            // Split long lists into multiple fields to avoid Discord's 1024 character limit
-            const dailyChunks = chunkLectures(data.dailyCancellations);
-            dailyChunks.forEach((chunk, chunkIndex) => {
-                const fieldName = "🔴 Daily Cancellations";
-                embed.addFields({
-                    name: fieldName,
-                    value: chunk.map((lecture, index) => {
-                        const globalIndex = chunkIndex * 10 + index + 1;
-                        return `**${globalIndex}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
-                    }).join('\n'),
-                    inline: false
-                });
+            embed.addFields({
+                name: "🔴 Daily Cancellations",
+                value: data.dailyCancellations.map((lecture, index) => {
+                    return `**${index + 1}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
+                }).join('\n\n'),
+                inline: false
             });
         }
 
         // Add permanent cancellations
         if (hasPermanentCancellations) {
-            // Split long lists into multiple fields to avoid Discord's 1024 character limit
-            const permanentChunks = chunkLectures(data.permanentCancellations);
-            permanentChunks.forEach((chunk, chunkIndex) => {
-                const fieldName = "⛔ Permanent Cancellations";
-                embed.addFields({
-                    name: fieldName,
-                    value: chunk.map((lecture, index) => {
-                        const globalIndex = chunkIndex * 10 + index + 1;
-                        return `**${globalIndex}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
-                    }).join('\n'),
-                    inline: false
-                });
+            embed.addFields({
+                name: "⛔ Permanent Cancellations",
+                value: data.permanentCancellations.map((lecture, index) => {
+                    return `**${index + 1}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
+                }).join('\n\n'),
+                inline: false
             });
         }
     }
