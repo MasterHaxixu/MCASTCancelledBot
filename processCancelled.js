@@ -77,7 +77,7 @@ const embedDefault = (data) => {
             // Split long lists into multiple fields to avoid Discord's 1024 character limit
             const dailyChunks = chunkLectures(data.dailyCancellations);
             dailyChunks.forEach((chunk, chunkIndex) => {
-                const fieldName = chunkIndex === 0 ? "🔴 Daily Cancellations" : "🔴 Daily Cancellations (continued)";
+                const fieldName = "🔴 Daily Cancellations";
                 embed.addFields({
                     name: fieldName,
                     value: chunk.map((lecture, index) => {
@@ -94,7 +94,7 @@ const embedDefault = (data) => {
             // Split long lists into multiple fields to avoid Discord's 1024 character limit
             const permanentChunks = chunkLectures(data.permanentCancellations);
             permanentChunks.forEach((chunk, chunkIndex) => {
-                const fieldName = chunkIndex === 0 ? "⛔ Permanent Cancellations" : "⛔ Permanent Cancellations (continued)";
+                const fieldName = "⛔ Permanent Cancellations";
                 embed.addFields({
                     name: fieldName,
                     value: chunk.map((lecture, index) => {
