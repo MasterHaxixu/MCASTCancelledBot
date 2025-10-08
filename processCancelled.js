@@ -5,7 +5,14 @@ const { getSubjectByName, createSubject, getCancelledBySubjectIdAndDate, createC
 
 const refresh = async (client) => {
     let data = await fetch('https://cancelled-lectures.haxixu.xyz/api/cancelled-lectures').then(res => res.json());
-    for (const lecture of data.lectures) {
+    
+    // Process all lectures (daily and permanent cancellations combined)
+    const allCancellations = [
+        ...(data.dailyCancellations || []),
+        ...(data.permanentCancellations || [])
+    ];
+    
+    for (const lecture of allCancellations) {
         let subject = await getSubjectByName(lecture.subject);
         if (subject.length === 0) {
             await createSubject(lecture.subject);
@@ -53,33 +60,67 @@ const embedDefault = (data) => {
         .setColor(0xFF6B6B) // Red color for cancelled lectures
         .setTimestamp();
 
-    if (data.lectures && data.lectures.length > 0) {
+    const hasDailyCancellations = data.dailyCancellations && data.dailyCancellations.length > 0;
+    const hasPermanentCancellations = data.permanentCancellations && data.permanentCancellations.length > 0;
 
-        data.lectures.forEach((lecture, index) => {
-            embed.addFields({
-                name: `${index + 1}. ${lecture.subject}`,
-                value: lecture.group ? `Classes: ${lecture.group}` : "No class info",
-                inline: false
-            });
-        });
-    } else {
+    if (!hasDailyCancellations && !hasPermanentCancellations) {
         embed.setDescription("No cancelled lectures today! 🎉");
         embed.setColor(0x00FF00); // Green color when no cancellations
-    }
+    } else {
+        // Add date information if available
+        if (data.date && data.date.formatted) {
+            embed.setDescription(`📅 **${data.date.formatted}**\n\n**Total Cancellations: ${data.totalCancellations || 0}**`);
+        }
 
-    // if (data.note) {
-    //     embed.addFields({
-    //         name: "📝 Additional Note",
-    //         value: data.note,
-    //         inline: false
-    //     });
-    // }
+        // Add daily cancellations
+        if (hasDailyCancellations) {
+            // Split long lists into multiple fields to avoid Discord's 1024 character limit
+            const dailyChunks = chunkLectures(data.dailyCancellations);
+            dailyChunks.forEach((chunk, chunkIndex) => {
+                const fieldName = chunkIndex === 0 ? "🔴 Daily Cancellations" : "🔴 Daily Cancellations (continued)";
+                embed.addFields({
+                    name: fieldName,
+                    value: chunk.map((lecture, index) => {
+                        const globalIndex = chunkIndex * 10 + index + 1;
+                        return `**${globalIndex}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
+                    }).join('\n\n'),
+                    inline: false
+                });
+            });
+        }
+
+        // Add permanent cancellations
+        if (hasPermanentCancellations) {
+            // Split long lists into multiple fields to avoid Discord's 1024 character limit
+            const permanentChunks = chunkLectures(data.permanentCancellations);
+            permanentChunks.forEach((chunk, chunkIndex) => {
+                const fieldName = chunkIndex === 0 ? "⛔ Permanent Cancellations" : "⛔ Permanent Cancellations (continued)";
+                embed.addFields({
+                    name: fieldName,
+                    value: chunk.map((lecture, index) => {
+                        const globalIndex = chunkIndex * 10 + index + 1;
+                        return `**${globalIndex}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
+                    }).join('\n\n'),
+                    inline: false
+                });
+            });
+        }
+    }
 
     embed.setFooter({
         text: "Last updated"
     });
 
     return embed;
+}
+
+// Helper function to chunk lectures into smaller groups to avoid Discord's field character limit
+const chunkLectures = (lectures, chunkSize = 5) => {
+    const chunks = [];
+    for (let i = 0; i < lectures.length; i += chunkSize) {
+        chunks.push(lectures.slice(i, i + chunkSize));
+    }
+    return chunks;
 }
 
 module.exports = refresh;
