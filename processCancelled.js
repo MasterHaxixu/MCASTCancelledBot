@@ -82,8 +82,8 @@ const embedDefault = (data) => {
                     name: fieldName,
                     value: chunk.map((lecture, index) => {
                         const globalIndex = chunkIndex * 10 + index + 1;
-                        return `**${globalIndex}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
-                    }).join('\n\n'),
+                        return `**${globalIndex}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
+                    }).join('\n'),
                     inline: false
                 });
             });
@@ -99,8 +99,8 @@ const embedDefault = (data) => {
                     name: fieldName,
                     value: chunk.map((lecture, index) => {
                         const globalIndex = chunkIndex * 10 + index + 1;
-                        return `**${globalIndex}.** ${lecture.subject}\n📚 Classes: ${lecture.group || "No class info"}`;
-                    }).join('\n\n'),
+                        return `**${globalIndex}.** ${lecture.subject}\n Classes: ${lecture.group || "No class info"}`;
+                    }).join('\n'),
                     inline: false
                 });
             });
